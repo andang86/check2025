@@ -2,10 +2,377 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Test Page</title>
+    <title>온열질환 예방조치 점검표 제출</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
+            margin: 0; 
+            padding: 20px 0; /* 위아래 여백 추가 */
+            background-color: #f4f4f9; 
+            color: #333; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px 30px; /* 좌우 여백 추가 */
+            background-color: #fff; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            border-radius: 8px; 
+        }
+        h1 { 
+            text-align: center; 
+            font-size: 1.8em;
+            margin-bottom: 30px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+            vertical-align: middle; 
+        }
+        th { 
+            background-color: #f8f9fa; 
+            font-weight: 600;
+        }
+        .input-group { 
+            margin-bottom: 25px; 
+        }
+        .input-group label { 
+            font-weight: bold; 
+            font-size: 1.1em; 
+            display: block;
+            margin-bottom: 8px;
+        }
+        .input-group input[type="text"] { 
+            width: 100%; 
+            box-sizing: border-box; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 1em; 
+        }
+        
+        button#submitBtn { 
+            display: block; 
+            width: 100%; 
+            padding: 15px; 
+            margin-top: 30px; 
+            background-color: #28a745; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 1.2em; 
+            font-weight: bold; 
+            transition: background-color 0.2s;
+        }
+        button#submitBtn:hover { background-color: #218838; }
+        button#submitBtn:disabled { background-color: #aaa; cursor: not-allowed; }
+
+        #message { 
+            margin-top: 20px; 
+            font-weight: bold; 
+            text-align: center; 
+            font-size: 1.1em;
+            padding: 10px;
+        }
+        .category { 
+            font-weight: bold; 
+            background-color: #e9ecef; 
+        }
+
+        .check-area label {
+            display: block; 
+            margin-bottom: 10px; 
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .check-area label:hover {
+            background-color: #f5f5f5;
+        }
+        .check-area label:last-child {
+            margin-bottom: 0; 
+        }
+        .check-area input[type="radio"] {
+            margin-right: 8px; 
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
-    <h1>테스트 페이지입니다.</h1>
-    <p>이 글자가 화면에 보이면, Vercel 배포와 파일 전송 자체는 정상적으로 작동하는 것입니다.</p>
+
+<div class="container">
+    <h1>온열질환 예방조치 이행실태 점검표</h1>
+
+    <div class="input-group">
+        <label for="chapterName">지회명:</label>
+        <input type="text" id="chapterName" name="chapterName" placeholder="지회명을 반드시 입력하세요" required>
+    </div>
+
+    <table id="checklistTable">
+        <thead>
+            <tr>
+                <th>점검 항목</th>
+                <th>세부내용</th>
+                <th>점검 결과</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="category" rowspan="2">1. 폭염시 작업중지</td>
+                <td>폭염으로 급박한 위험 발생 시 사업주 작업중지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check1_1" value="예"> 예</label>
+                    <label><input type="radio" name="check1_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>폭염으로 급박한 위험 발생 시 노동자 작업거부권 보장</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check1_2" value="예"> 예</label>
+                    <label><input type="radio" name="check1_2" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category" rowspan="3">2. 체감온도 31℃이상 예방조치</td>
+                <td>냉방·통풍 위한 적절한 온도·습도 조절 장치 설치 및 작동 (에어컨, 이동식 냉방장치, 산업용 선풍기)</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check2_1" value="예"> 예</label>
+                    <label><input type="radio" name="check2_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>작업 시간대 조정</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check2_2" value="예"> 예</label>
+                    <label><input type="radio" name="check2_2" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>적절한 휴식 시간 부여</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check2_3" value="예"> 예</label>
+                    <label><input type="radio" name="check2_3" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">3.온도·습도계 비치</td>
+                <td>주된 작업 장소에 온도계 또는 온·습도계를 상시 비치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check3_1" value="예"> 예</label>
+                    <label><input type="radio" name="check3_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">4. 온열질환 예방 교육 실시</td>
+                <td>고열 또는 폭염 작업에 따른 온열질환 증상 및 예방 방법, 응급조치 요령 등을 안내, 정기 안전 교육 시간에 교육</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check4_1" value="예"> 예</label>
+                    <label><input type="radio" name="check4_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">5. 체감온도 및 조치 사항 기록·보관</td>
+                <td>사업장 체감온도 측정및 조치 사항 기록·보관</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check5_1" value="예"> 예</label>
+                    <label><input type="radio" name="check5_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">6. 온열질환 의심 시 대응 조치 여부</td>
+                <td>- 온열질환 발생 시 의식이 없는 경우 119 신고 및 조치<br>- 의식이 있는 경우 즉시 예방 조치 및 증상 호전 없으면 119 신고 및 조치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check6_1" value="예"> 예</label>
+                    <label><input type="radio" name="check6_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">7. 체감온도 33℃ 이상 폭염작업 시 휴식 부여</td>
+                <td>매 2시간 이내에 20분 이상 휴식 시간 부여</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check7_1" value="예"> 예</label>
+                    <label><input type="radio" name="check7_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">8. 수분 및 염분 제공 여부</td>
+                <td>땀을 많이 흘리는 작업 장소에 소금과 깨끗한 물을 ‘충분히’ 비치 및 제공</td>
+                <td class.check-area">
+                    <label><input type="radio" name="check8_1" value="예"> 예</label>
+                    <label><input type="radio" name="check8_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">9. 탈의 시설, 세탁시설, 목욕시설 등</td>
+                <td>작업복이 심하게 젖게 되는 작업장에 탈의시설, 목욕시설, 세탁시설 및 작업복을 말릴 수 있는 시설 설치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check9_1" value="예"> 예</label>
+                    <label><input type="radio" name="check9_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">10. 보호구 지급</td>
+                <td>고열 작업시 방열 장갑, 방열복 지급</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check10_1" value="예"> 예</label>
+                    <label><input type="radio" name="check10_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category" rowspan="12">11. 휴게시설 설치및 적정 관리</td>
+                <td>휴게시설(쉼터) 설치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_1" value="예"> 예</label>
+                    <label><input type="radio" name="check11_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>하청 노동자 휴게시설 설치 혹은 공동 이용 보장</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_2" value="예"> 예</label>
+                    <label><input type="radio" name="check11_2" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>편리하고 가까운 곳에 설치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_3" value="예"> 예</label>
+                    <label><input type="radio" name="check11_3" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>적정한 온도 (18℃-28℃) 유지 냉난방 기능</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_4" value="예"> 예</label>
+                    <label><input type="radio" name="check11_4" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>적정한 습도 (50-55%) 유지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_5" value="예"> 예</label>
+                    <label><input type="radio" name="check11_5" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>조명 (100-200럭스) 유지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_6" value="예"> 예</label>
+                    <label><input type="radio" name="check11_6" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>창문을 통한 환기 가능</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_7" value="예"> 예</label>
+                    <label><input type="radio" name="check11_7" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>의자 등 비품 구비</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_8" value="예"> 예</label>
+                    <label><input type="radio" name="check11_8" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>물, 식수 설비 구비</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_9" value="예"> 예</label>
+                    <label><input type="radio" name="check11_9" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>휴게시설 표지 외부 부착</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_10" value="예"> 예</label>
+                    <label><input type="radio" name="check11_10" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>휴게시설 청소, 관리 담당자 지정</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_11" value="예"> 예</label>
+                    <label><input type="radio" name="check11_11" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>물품보관 등 휴게시설 목적 외 용도 사용 금지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_12" value="예"> 예</label>
+                    <label><input type="radio" name="check11_12" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="submitBtn">제출하기</button>
+    <div id="message"></div>
+</div>
+
+<script>
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+        const chapterName = document.getElementById('chapterName').value;
+        if (!chapterName) {
+            alert('지회명을 입력해주세요!');
+            return;
+        }
+
+        const checklistData = {};
+        const allRadioNames = new Set();
+        document.querySelectorAll('#checklistTable input[type="radio"]').forEach(radio => {
+            allRadioNames.add(radio.name);
+        });
+
+        allRadioNames.forEach(name => {
+            const checkedRadio = document.querySelector(`input[name="${name}"]:checked`);
+            checklistData[name] = checkedRadio ? checkedRadio.value : '미선택';
+        });
+
+        const isAllAnswered = Object.values(checklistData).every(value => value !== '미선택');
+        if (!isAllAnswered) {
+            if (!confirm('체크하지 않은 항목이 있습니다. 그대로 제출하시겠습니까?')) {
+                return;
+            }
+        }
+
+        const submissionData = { chapterName, checklistData };
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = '제출 중...';
+        document.getElementById('submitBtn').disabled = true;
+
+        try {
+            const response = await fetch('/api/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(submissionData),
+            });
+
+            if (response.ok) {
+                messageDiv.innerHTML = '✅ 성공적으로 제출되었습니다!<br>창을 닫아주세요.';
+                messageDiv.style.color = 'green';
+                document.getElementById('checklistTable').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'none';
+                document.querySelector('.input-group').style.display = 'none';
+            } else {
+                throw new Error('서버 응답 오류');
+            }
+        } catch (error) {
+            messageDiv.textContent = '제출에 실패했습니다. 페이지를 새로고침하고 다시 시도해주세요.';
+            messageDiv.style.color = 'red';
+            document.getElementById('submitBtn').disabled = false;
+        }
+    });
+</script>
+
 </body>
 </html>
