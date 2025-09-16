@@ -2,28 +2,71 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>제출 결과 확인</title>
+    <title>제출 결과 확인 (세로 보기)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        h1 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
-        tbody tr:nth-child(even) { background-color: #f9f9f9; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9; 
+        }
+        h1 { 
+            text-align: center; 
+            color: #333;
+        }
+        #results-container {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .submission-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .card-header h2 {
+            margin: 0;
+            color: #0056b3;
+        }
+        .card-header p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .card-body p {
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+        .card-body strong {
+            display: block;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .answer {
+            padding-left: 10px;
+            font-weight: 500;
+        }
+        .answer-yes {
+            color: #28a745;
+        }
+        .answer-no {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
     <h1>전체 제출 결과</h1>
-    <table id="resultsTable">
-        <thead>
-            <tr>
-                <th>제출일시</th>
-                <th>지회명</th>
-                </tr>
-        </thead>
-        <tbody>
-            </tbody>
-    </table>
+
+    <div id="results-container">
+        </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -36,54 +79,89 @@
 
             try {
                 const response = await fetch('/api/results', {
-                    method: 'POST', // POST로 비밀번호를 안전하게 전송
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ password })
                 });
 
-                if (response.status === 401) {
-                    alert('비밀번호가 틀렸습니다.');
-                    sessionStorage.removeItem('admin-auth');
-                    window.location.href = '/admin.html';
+                if (!response.ok) {
+                    if (response.status === 401) alert('비밀번호가 틀렸습니다.');
+                    throw new Error('데이터 로딩 실패');
+                }
+
+                const data = await response.json();
+                const resultsContainer = document.getElementById('results-container');
+                resultsContainer.innerHTML = ''; 
+
+                if (data.length === 0) {
+                    resultsContainer.innerHTML = '<p style="text-align:center;">제출된 데이터가 없습니다.</p>';
                     return;
                 }
                 
-                if (!response.ok) throw new Error('데이터 로딩 실패');
+                // 각 항목의 질문 텍스트 전체 목록
+                const questions = {
+                    'check1_1': '폭염으로 급박한 위험 발생 시 사업주 작업중지',
+                    'check1_2': '폭염으로 급박한 위험 발생 시 노동자 작업거부권 보장',
+                    'check2_1': '냉방·통풍 위한 적절한 온도·습도 조절 장치 설치 및 작동',
+                    'check2_2': '작업 시간대 조정',
+                    'check2_3': '적절한 휴식 시간 부여',
+                    'check3_1': '주된 작업 장소에 온도계 또는 온·습도계를 상시 비치',
+                    'check4_1': '온열질환 증상 및 예방 방법, 응급조치 요령 등 교육',
+                    'check5_1': '사업장 체감온도 측정 및 조치 사항 기록·보관',
+                    'check6_1': '온열질환 의심 시 대응 조치 여부',
+                    'check7_1': '체감온도 33℃ 이상 시 매 2시간 내 20분 이상 휴식 부여',
+                    'check8_1': '땀을 많이 흘리는 작업 장소에 소금과 깨끗한 물 제공',
+                    'check9_1': '탈의시설, 목욕시설, 세탁시설 및 건조시설 설치',
+                    'check10_1': '고열 작업시 방열 장갑, 방열복 지급',
+                    'check11_1': '휴게시설(쉼터) 설치',
+                    'check11_2': '하청 노동자 휴게시설 설치 혹은 공동 이용 보장',
+                    'check11_3': '편리하고 가까운 곳에 설치',
+                    'check11_4': '적정한 온도 (18℃-28℃) 유지 냉난방 기능',
+                    'check11_5': '적정한 습도 (50-55%) 유지',
+                    'check11_6': '조명 (100-200럭스) 유지',
+                    'check11_7': '창문을 통한 환기 가능',
+                    'check11_8': '의자 등 비품 구비',
+                    'check11_9': '물, 식수 설비 구비',
+                    'check11_10': '휴게시설 표지 외부 부착',
+                    'check11_11': '휴게시설 청소, 관리 담당자 지정',
+                    'check11_12': '물품보관 등 휴게시설 목적 외 용도 사용 금지'
+                };
 
-                const data = await response.json();
-                const tableHead = document.querySelector('#resultsTable thead tr');
-                const tableBody = document.querySelector('#resultsTable tbody');
+                data.forEach(submission => {
+                    const card = document.createElement('div');
+                    card.className = 'submission-card';
 
-                if (data.length > 0) {
-                    // 헤더 생성 (첫 번째 데이터 기준)
-                    const headers = Object.keys(data[0].checklistData);
-                    headers.forEach(header => {
-                        const th = document.createElement('th');
-                        th.textContent = header;
-                        tableHead.appendChild(th);
+                    const timestamp = new Date(submission.created_at || submission.timestamp).toLocaleString('ko-KR');
+                    
+                    let cardHTML = `
+                        <div class="card-header">
+                            <h2>${submission.chapterName}</h2>
+                            <p>제출일시: ${timestamp}</p>
+                        </div>
+                        <div class="card-body">
+                    `;
+
+                    const sortedKeys = Object.keys(submission.checklistData).sort();
+
+                    sortedKeys.forEach(key => {
+                        const questionText = questions[key] || key; // questions 객체에 정의된 질문을 사용
+                        const answer = submission.checklistData[key];
+                        let answerClass = '';
+                        if (answer === '예') answerClass = 'answer-yes';
+                        if (answer === '아니요') answerClass = 'answer-no';
+                        
+                        cardHTML += `<p><strong>${questionText}</strong><span class="answer ${answerClass}">${answer}</span></p>`;
                     });
 
-                    // 본문 생성
-                    data.forEach(row => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${row.timestamp}</td>
-                            <td>${row.chapterName}</td>
-                        `;
-                        headers.forEach(header => {
-                            const td = document.createElement('td');
-                            td.textContent = row.checklistData[header] || 'N/A';
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    });
-                } else {
-                    tableBody.innerHTML = '<tr><td colspan="2">제출된 데이터가 없습니다.</td></tr>';
-                }
+                    cardHTML += `</div>`;
+                    card.innerHTML = cardHTML;
+                    resultsContainer.appendChild(card);
+                });
 
             } catch (error) {
                 console.error(error);
-                alert('결과를 불러오는 중 오류가 발생했습니다.');
+                const container = document.getElementById('results-container');
+                container.innerHTML = `<p style="text-align:center; color:red;">결과를 불러오는 중 오류가 발생했습니다.</p>`;
             }
         });
     </script>
