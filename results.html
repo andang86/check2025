@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>제출 결과 확인</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        tbody tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1>전체 제출 결과</h1>
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th>제출일시</th>
+                <th>지회명</th>
+                </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const password = sessionStorage.getItem('admin-auth');
+            if (!password) {
+                alert('로그인이 필요합니다.');
+                window.location.href = '/admin.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/results', {
+                    method: 'POST', // POST로 비밀번호를 안전하게 전송
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                if (response.status === 401) {
+                    alert('비밀번호가 틀렸습니다.');
+                    sessionStorage.removeItem('admin-auth');
+                    window.location.href = '/admin.html';
+                    return;
+                }
+                
+                if (!response.ok) throw new Error('데이터 로딩 실패');
+
+                const data = await response.json();
+                const tableHead = document.querySelector('#resultsTable thead tr');
+                const tableBody = document.querySelector('#resultsTable tbody');
+
+                if (data.length > 0) {
+                    // 헤더 생성 (첫 번째 데이터 기준)
+                    const headers = Object.keys(data[0].checklistData);
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        tableHead.appendChild(th);
+                    });
+
+                    // 본문 생성
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.timestamp}</td>
+                            <td>${row.chapterName}</td>
+                        `;
+                        headers.forEach(header => {
+                            const td = document.createElement('td');
+                            td.textContent = row.checklistData[header] || 'N/A';
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="2">제출된 데이터가 없습니다.</td></tr>';
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert('결과를 불러오는 중 오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
+</html>
