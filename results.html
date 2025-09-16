@@ -2,73 +2,119 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>제출 결과 확인 (세로 보기)</title>
+    <title>제출 결과 확인 (가로 보기)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
-            margin: 0;
-            padding: 20px;
+            margin: 20px;
             background-color: #f4f4f9; 
         }
         h1 { 
             text-align: center; 
             color: #333;
         }
-        #results-container {
-            max-width: 800px;
-            margin: 20px auto;
-        }
-        .submission-card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
+        .controls {
+            text-align: right;
             margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            max-width: 95%;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .card-header {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+        button#download-btn {
+            padding: 10px 20px;
+            background-color: #1d6f42;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
         }
-        .card-header h2 {
-            margin: 0;
-            color: #0056b3;
+        button#download-btn:hover {
+            background-color: #165934;
         }
-        .card-header p {
-            margin: 5px 0 0;
-            color: #666;
-            font-size: 0.9em;
+        .table-container {
+            width: 95%;
+            overflow-x: auto; /* 가로 스크롤 기능 */
+            margin: 0 auto;
+            border: 1px solid #ddd;
         }
-        .card-body p {
-            margin: 12px 0;
-            line-height: 1.6;
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            white-space: nowrap; /* 셀 내용 줄바꿈 방지 */
         }
-        .card-body strong {
-            display: block;
-            color: #333;
-            margin-bottom: 4px;
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: center; 
+            vertical-align: middle; 
         }
-        .answer {
-            padding-left: 10px;
-            font-weight: 500;
+        th { 
+            background-color: #f8f9fa; 
+            font-weight: 600;
+            position: sticky; /* 스크롤 시 헤더 고정 */
+            top: 0;
+            z-index: 2;
         }
-        .answer-yes {
-            color: #28a745;
-        }
-        .answer-no {
-            color: #dc3545;
+        .question-col { /* 질문이 있는 첫 번째 열 스타일 */
+            text-align: left;
+            font-weight: bold;
+            background-color: #f8f9fa;
+            position: sticky; /* 스크롤 시 첫 번째 열 고정 */
+            left: 0;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
     <h1>전체 제출 결과</h1>
 
-    <div id="results-container">
-        </div>
+    <div class="controls">
+        <button id="download-btn">엑셀로 다운로드 📥</button>
+    </div>
+
+    <div class="table-container">
+        <table id="resultsTable">
+            <thead>
+                </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
 
     <script>
+        // 모든 질문 항목의 목록 (나중에 테이블 생성 시 순서대로 사용됨)
+        const questions = {
+            'check1_1': '폭염으로 급박한 위험 발생 시 사업주 작업중지',
+            'check1_2': '폭염으로 급박한 위험 발생 시 노동자 작업거부권 보장',
+            'check2_1': '냉방·통풍 위한 적절한 온도·습도 조절 장치 설치 및 작동',
+            'check2_2': '작업 시간대 조정',
+            'check2_3': '적절한 휴식 시간 부여',
+            'check3_1': '주된 작업 장소에 온도계 또는 온·습도계를 상시 비치',
+            'check4_1': '온열질환 증상 및 예방 방법, 응급조치 요령 등 교육',
+            'check5_1': '사업장 체감온도 측정 및 조치 사항 기록·보관',
+            'check6_1': '온열질환 의심 시 대응 조치 여부',
+            'check7_1': '체감온도 33℃ 이상 시 매 2시간 내 20분 이상 휴식 부여',
+            'check8_1': '땀을 많이 흘리는 작업 장소에 소금과 깨끗한 물 제공',
+            'check9_1': '탈의시설, 목욕시설, 세탁시설 및 건조시설 설치',
+            'check10_1': '고열 작업시 방열 장갑, 방열복 지급',
+            'check11_1': '휴게시설(쉼터) 설치',
+            'check11_2': '하청 노동자 휴게시설 설치 혹은 공동 이용 보장',
+            'check11_3': '편리하고 가까운 곳에 설치',
+            'check11_4': '적정한 온도 (18℃-28℃) 유지 냉난방 기능',
+            'check11_5': '적정한 습도 (50-55%) 유지',
+            'check11_6': '조명 (100-200럭스) 유지',
+            'check11_7': '창문을 통한 환기 가능',
+            'check11_8': '의자 등 비품 구비',
+            'check11_9': '물, 식수 설비 구비',
+            'check11_10': '휴게시설 표지 외부 부착',
+            'check11_11': '휴게시설 청소, 관리 담당자 지정',
+            'check11_12': '물품보관 등 휴게시설 목적 외 용도 사용 금지'
+        };
+
         document.addEventListener('DOMContentLoaded', async () => {
             const password = sessionStorage.getItem('admin-auth');
             if (!password) {
@@ -84,86 +130,84 @@
                     body: JSON.stringify({ password })
                 });
 
-                if (!response.ok) {
-                    if (response.status === 401) alert('비밀번호가 틀렸습니다.');
-                    throw new Error('데이터 로딩 실패');
-                }
-
+                if (!response.ok) throw new Error('데이터 로딩 실패');
                 const data = await response.json();
-                const resultsContainer = document.getElementById('results-container');
-                resultsContainer.innerHTML = ''; 
-
-                if (data.length === 0) {
-                    resultsContainer.innerHTML = '<p style="text-align:center;">제출된 데이터가 없습니다.</p>';
-                    return;
-                }
                 
-                // 각 항목의 질문 텍스트 전체 목록
-                const questions = {
-                    'check1_1': '폭염으로 급박한 위험 발생 시 사업주 작업중지',
-                    'check1_2': '폭염으로 급박한 위험 발생 시 노동자 작업거부권 보장',
-                    'check2_1': '냉방·통풍 위한 적절한 온도·습도 조절 장치 설치 및 작동',
-                    'check2_2': '작업 시간대 조정',
-                    'check2_3': '적절한 휴식 시간 부여',
-                    'check3_1': '주된 작업 장소에 온도계 또는 온·습도계를 상시 비치',
-                    'check4_1': '온열질환 증상 및 예방 방법, 응급조치 요령 등 교육',
-                    'check5_1': '사업장 체감온도 측정 및 조치 사항 기록·보관',
-                    'check6_1': '온열질환 의심 시 대응 조치 여부',
-                    'check7_1': '체감온도 33℃ 이상 시 매 2시간 내 20분 이상 휴식 부여',
-                    'check8_1': '땀을 많이 흘리는 작업 장소에 소금과 깨끗한 물 제공',
-                    'check9_1': '탈의시설, 목욕시설, 세탁시설 및 건조시설 설치',
-                    'check10_1': '고열 작업시 방열 장갑, 방열복 지급',
-                    'check11_1': '휴게시설(쉼터) 설치',
-                    'check11_2': '하청 노동자 휴게시설 설치 혹은 공동 이용 보장',
-                    'check11_3': '편리하고 가까운 곳에 설치',
-                    'check11_4': '적정한 온도 (18℃-28℃) 유지 냉난방 기능',
-                    'check11_5': '적정한 습도 (50-55%) 유지',
-                    'check11_6': '조명 (100-200럭스) 유지',
-                    'check11_7': '창문을 통한 환기 가능',
-                    'check11_8': '의자 등 비품 구비',
-                    'check11_9': '물, 식수 설비 구비',
-                    'check11_10': '휴게시설 표지 외부 부착',
-                    'check11_11': '휴게시설 청소, 관리 담당자 지정',
-                    'check11_12': '물품보관 등 휴게시설 목적 외 용도 사용 금지'
-                };
-
-                data.forEach(submission => {
-                    const card = document.createElement('div');
-                    card.className = 'submission-card';
-
-                    const timestamp = new Date(submission.created_at || submission.timestamp).toLocaleString('ko-KR');
-                    
-                    let cardHTML = `
-                        <div class="card-header">
-                            <h2>${submission.chapterName}</h2>
-                            <p>제출일시: ${timestamp}</p>
-                        </div>
-                        <div class="card-body">
-                    `;
-
-                    const sortedKeys = Object.keys(submission.checklistData).sort();
-
-                    sortedKeys.forEach(key => {
-                        const questionText = questions[key] || key; // questions 객체에 정의된 질문을 사용
-                        const answer = submission.checklistData[key];
-                        let answerClass = '';
-                        if (answer === '예') answerClass = 'answer-yes';
-                        if (answer === '아니요') answerClass = 'answer-no';
-                        
-                        cardHTML += `<p><strong>${questionText}</strong><span class="answer ${answerClass}">${answer}</span></p>`;
-                    });
-
-                    cardHTML += `</div>`;
-                    card.innerHTML = cardHTML;
-                    resultsContainer.appendChild(card);
-                });
+                renderTable(data);
 
             } catch (error) {
                 console.error(error);
-                const container = document.getElementById('results-container');
-                container.innerHTML = `<p style="text-align:center; color:red;">결과를 불러오는 중 오류가 발생했습니다.</p>`;
+                alert('결과를 불러오는 중 오류가 발생했습니다.');
             }
         });
+
+        function renderTable(data) {
+            const table = document.getElementById('resultsTable');
+            table.innerHTML = ''; // 기존 테이블 내용 비우기
+
+            if (data.length === 0) {
+                table.innerHTML = '<tbody><tr><td>제출된 데이터가 없습니다.</td></tr></tbody>';
+                return;
+            }
+
+            // --- 1. 헤더 생성 (질문, 지회명1, 지회명2, ...) ---
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const questionHeader = document.createElement('th');
+            questionHeader.className = 'question-col';
+            questionHeader.textContent = '점검 항목';
+            headerRow.appendChild(questionHeader);
+
+            data.forEach(submission => {
+                const th = document.createElement('th');
+                th.textContent = submission.chapterName;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // --- 2. 본문 생성 (질문별로 행 생성) ---
+            const tbody = document.createElement('tbody');
+            Object.keys(questions).forEach(questionKey => {
+                const questionText = questions[questionKey];
+                const row = document.createElement('tr');
+                
+                const questionCell = document.createElement('td');
+                questionCell.className = 'question-col';
+                questionCell.textContent = questionText;
+                row.appendChild(questionCell);
+
+                // 각 제출물에 대해 해당 질문의 답변 찾기
+                data.forEach(submission => {
+                    const answerCell = document.createElement('td');
+                    const answer = submission.checklistData[questionKey] || '미선택';
+                    answerCell.textContent = answer;
+                    row.appendChild(answerCell);
+                });
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+        }
+        
+        // --- 3. 엑셀 다운로드 기능 ---
+        document.getElementById('download-btn').addEventListener('click', () => {
+            const table = document.getElementById('resultsTable');
+            if (!table || table.rows.length === 0) {
+                alert('다운로드할 데이터가 없습니다.');
+                return;
+            }
+            
+            // 테이블 데이터를 엑셀 시트 형태로 변환
+            const ws = XLSX.utils.table_to_sheet(table);
+            
+            // 엑셀 워크북 생성 및 시트 추가
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '제출결과');
+            
+            // 파일 다운로드
+            XLSX.writeFile(wb, `온열질환_점검결과_${new Date().toLocaleDateString('ko-KR')}.xlsx`);
+        });
+
     </script>
 </body>
 </html>
