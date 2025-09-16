@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>온열질환 예방조치 이행실태 점검표</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .check-area {
+            text-align: center;
+        }
+        input[type="radio"] {
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        button {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .category {
+            font-weight: bold;
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>온열질환 예방조치 이행실태 점검표</h1>
+
+    <table id="checklistTable">
+        <thead>
+            <tr>
+                <th style="width:10%;">점검 항목</th>
+                <th>세부내용</th>
+                <th style="width:15%;">점검 결과</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="category">1. 폭염 시 작업중지</td>
+                <td>폭염으로 급박한 위험 발생 시 사업주 작업중지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check1_1" value="예"> 예</label>
+                    <label><input type="radio" name="check1_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>폭염으로 급박한 위험 발생 시 노동자 작업거부권 보장</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check1_2" value="예"> 예</label>
+                    <label><input type="radio" name="check1_2" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">2. 체감온도 31℃ 이상 예방조치</td>
+                <td>냉방·통풍 위한 적절한 온도·습도 조절 장치 설치 및 작동 (에어컨, 이동식 냉방장치, 산업용 선풍기)</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check2_1" value="예"> 예</label>
+                    <label><input type="radio" name="check2_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>작업 시간대 조정</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check2_2" value="예"> 예</label>
+                    <label><input type="radio" name="check2_2" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>적절한 휴식 시간 부여</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check2_3" value="예"> 예</label>
+                    <label><input type="radio" name="check2_3" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">3. 온도·습도계 비치</td>
+                <td>주된 작업 장소에 온도계 또는 온·습도계를 상시 비치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check3" value="예"> 예</label>
+                    <label><input type="radio" name="check3" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">4. 온열질환 예방 교육 실시</td>
+                <td>고열 또는 폭염 작업에 따른 온열질환 증상 및 예방 방법, 응급조치 요령 등을 안내, 정기 안전 교육 시간에 교육</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check4" value="예"> 예</label>
+                    <label><input type="radio" name="check4" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">5. 체감온도 및 조치 사항 기록·보관</td>
+                <td>사업장 체감온도 측정 및 조치 사항 기록·보관</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check5" value="예"> 예</label>
+                    <label><input type="radio" name="check5" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">6. 온열질환 의심 시 대응 조치 여부</td>
+                <td>- 온열질환 발생 시 의식이 없는 경우 119 신고 및 조치<br>- 의식이 있는 경우 즉시 예방 조치 및 증상 호전 없으면 119 신고 및 조치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check6" value="예"> 예</label>
+                    <label><input type="radio" name="check6" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">7. 체감온도 33℃ 이상 폭염작업 시 휴식 부여</td>
+                <td>매 2시간 이내에 20분 이상 휴식 시간 부여</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check7" value="예"> 예</label>
+                    <label><input type="radio" name="check7" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">8. 수분 및 염분 제공 여부</td>
+                <td>땀을 많이 흘리는 작업 장소에 소금과 깨끗한 물을 ‘충분히’ 비치 및 제공</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check8" value="예"> 예</label>
+                    <label><input type="radio" name="check8" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">9. 탈의 시설, 세탁시설, 목욕시설 등</td>
+                <td>작업복이 심하게 젖게 되는 작업장에 탈의시설, 목욕시설, 세탁시설 및 작업복을 말릴 수 있는 시설 설치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check9" value="예"> 예</label>
+                    <label><input type="radio" name="check9" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="category">10. 보호구 지급</td>
+                <td>고열 작업 시 방열 장갑, 방열복 지급</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check10" value="예"> 예</label>
+                    <label><input type="radio" name="check10" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="12" class="category">11. 휴게시설 설치 및 적정 관리</td>
+                <td>휴게시설(쉼터) 설치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_1" value="예"> 예</label>
+                    <label><input type="radio" name="check11_1" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>하청 노동자 휴게시설 설치 혹은 공동 이용 보장</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_2" value="예"> 예</label>
+                    <label><input type="radio" name="check11_2" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>편리하고 가까운 곳에 설치</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_3" value="예"> 예</label>
+                    <label><input type="radio" name="check11_3" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>적정한 온도 (18℃-28℃) 유지 냉난방 기능</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_4" value="예"> 예</label>
+                    <label><input type="radio" name="check11_4" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>적정한 습도 (50-55%) 유지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_5" value="예"> 예</label>
+                    <label><input type="radio" name="check11_5" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>조명 (100-200럭스) 유지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_6" value="예"> 예</label>
+                    <label><input type="radio" name="check11_6" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>창문을 통한 환기 가능</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_7" value="예"> 예</label>
+                    <label><input type="radio" name="check11_7" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>의자 등 비품 구비</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_8" value="예"> 예</label>
+                    <label><input type="radio" name="check11_8" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>물, 식수 설비 구비</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_9" value="예"> 예</label>
+                    <label><input type="radio" name="check11_9" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>휴게시설 표지 외부 부착</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_10" value="예"> 예</label>
+                    <label><input type="radio" name="check11_10" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>휴게시설 청소, 관리 담당자 지정</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_11" value="예"> 예</label>
+                    <label><input type="radio" name="check11_11" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+            <tr>
+                <td>물품보관 등 휴게시설 목적 외 용도 사용 금지</td>
+                <td class="check-area">
+                    <label><input type="radio" name="check11_12" value="예"> 예</label>
+                    <label><input type="radio" name="check11_12" value="아니요"> 아니요</label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="exportToExcel()">엑셀로 다운로드</button>
+
+    <script>
+        function exportToExcel() {
+            const table = document.getElementById("checklistTable");
+            const rows = table.querySelectorAll("tr");
+            let data = [];
+
+            // 헤더 추가
+            let header = [];
+            rows[0].querySelectorAll("th").forEach(th => {
+                header.push(th.innerText);
+            });
+            data.push(header);
+
+            // 본문 데이터 추출
+            for (let i = 1; i < rows.length; i++) {
+                let rowData = [];
+                const cells = rows[i].querySelectorAll("td");
+                
+                // rowspan 처리
+                if (rows[i].cells[0].rowSpan > 1) {
+                    rowData.push(cells[0].innerText);
+                    rowData.push(cells[1].innerText);
+                } else if(rows[i].cells.length === 2) {
+                     rowData.push(""); // rowspan으로 인해 셀이 없는 경우, 빈 값 추가
+                     rowData.push(cells[0].innerText);
+                }
+                 else {
+                    rowData.push(cells[0].innerText);
+                    rowData.push(cells[1].innerText);
+                }
+
+                const radios = cells[cells.length - 1].querySelectorAll('input[type="radio"]');
+                let checkedValue = "";
+                radios.forEach(radio => {
+                    if (radio.checked) {
+                        checkedValue = radio.value;
+                    }
+                });
+                rowData.push(checkedValue);
+                data.push(rowData);
+            }
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "점검결과");
+
+            // 컬럼 너비 자동 조절
+            const colWidths = [
+                {wch: 25}, // 점검 항목
+                {wch: 80}, // 세부내용
+                {wch: 15}  // 점검 결과
+            ];
+            ws['!cols'] = colWidths;
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, "온열질환_예방조치_점검결과.xlsx");
+        }
+    </script>
+
+</body>
+</html>
